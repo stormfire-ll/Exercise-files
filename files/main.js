@@ -250,34 +250,27 @@ function create() {
 
             // Optional: Check if a radio button is selected
             if (newAnimal.isSterilized) {
-                const selectedValue = resource.isSterilized.value;
-                newAnimal.isSterilized = resource.isSterilized.value;
+                const selectedValue = newAnimal.isSterilized.value;
+                newAnimal.isSterilized = newAnimal.isSterilized.value;
                 console.log("Selected Value:", selectedValue);
             } else {
                 console.log("No radio button selected");
             }
             
-            // resource.animalSpecies = document.getElementById("resource-animalSpecies").value;
-            // resource.name = document.getElementById("resource-name").value;
-            // resource.age = document.getElementById("resource-age").value;
-            // resource.isSterilized = document.getElementById(resource.idforDOM).querySelector('input[name="resource-isSterilized"]:checked').value;
-
+            fetch(url = `/api/resources`, {
+                method: "POST",
+                body: JSON.stringify(newAnimal)})
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("data process error");
+                    }
+                    add(newAnimal, document.getElementById(newAnimal.idforDOM));  // <- Call this after the resource is updated successfully on the server
+                    console.log("New resource on server created successfully.")
+                })
+                .catch((error) => {
+                    console.error("Network Error: ", error);
+            });     
         }))
-    
-    fetch(url = `/api/resources`, {
-        method: "POST",
-        body: JSON.stringify(newAnimal)})
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("data process error");
-            }
-            add(newAnimal, document.getElementById(newAnimal.idforDOM));  // <- Call this after the resource is updated successfully on the server
-            console.log("New resource on server created successfully.")
-        })
-        .catch((error) => {
-            console.error("Network Error: ", error);
-        });     
-
 
     //Clear all fields
     // document.getElementById("resource-animalSpecies").value = "";
@@ -287,6 +280,7 @@ function create() {
     // for (const radio of isSterilizedRadioButtons) {
     //     radio.checked = false;
     // }
+
     // Add to DOM
     formCreator.appendTo(document.querySelector("main"));
 }
